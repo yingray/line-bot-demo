@@ -3,6 +3,7 @@ import { middleware, JSONParseError, SignatureValidationFailed, Client } from '@
 import dotenv from 'dotenv'
 import fs from 'fs'
 import _ from 'lodash'
+import mustache from 'mustache'
 
 import bot from './bot'
 
@@ -21,6 +22,7 @@ const config = {
   channelAccessToken: process.env.ACCESS_TOKEN,
   channelSecret: process.env.SECRET
 }
+const profileTemplate = fs.readFileSync('./src/templates/profile.html', 'utf8')
 
 export const baseUrl = process.env.BASE_URL
 
@@ -37,20 +39,13 @@ app.get('/profile', async (req, res) => {
   }
   try {
     const profile = await client.getProfile(userId)
-    res.send(`
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <h1>Name: ${profile.displayName}</h1>
-    <h3>Status: ${profile.statusMessage}</h3>
-    <img src="${profile.pictureUrl}" width="200" height="200">
-    <a href="https://line.me/ti/p/@ghj3284p" style="
-    position: fixed;
-    width: 50px;
-    height: 50px;
-    background:  #ccc;
-    right: 0;
-    top: 0;
-    color: black;"></a>
-  `)
+    mustache.parse(profileTemplate)
+    const html = mustache.render(profileTemplate, {
+      name: profile.displayName || '',
+      status: profile.statusMessage || '',
+      image: profile.pictureUrl
+    })
+    res.send(html)
   } catch (err) {
     res.send('Not found')
   }

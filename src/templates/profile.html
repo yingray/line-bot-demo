@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Profile</title>
+  <style>
+    html,
+    body,
+    div,
+    span,
+    applet,
+    object,
+    iframe,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    blockquote,
+    pre,
+    a,
+    abbr,
+    acronym,
+    address,
+    big,
+    cite,
+    code,
+    del,
+    dfn,
+    em,
+    img,
+    ins,
+    kbd,
+    q,
+    s,
+    samp,
+    small,
+    strike,
+    strong,
+    sub,
+    sup,
+    tt,
+    var,
+    b,
+    u,
+    i,
+    center,
+    dl,
+    dt,
+    dd,
+    ol,
+    ul,
+    li,
+    fieldset,
+    form,
+    label,
+    legend,
+    table,
+    caption,
+    tbody,
+    tfoot,
+    thead,
+    tr,
+    th,
+    td,
+    article,
+    aside,
+    canvas,
+    details,
+    embed,
+    figure,
+    figcaption,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    output,
+    ruby,
+    section,
+    summary,
+    time,
+    mark,
+    audio,
+    video {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      font-size: 100%;
+      font: inherit;
+      vertical-align: baseline;
+    }
+
+    /* HTML5 display-role reset for older browsers */
+
+    article,
+    aside,
+    details,
+    figcaption,
+    figure,
+    footer,
+    header,
+    hgroup,
+    menu,
+    nav,
+    section {
+      display: block;
+    }
+
+    body {
+      line-height: 1;
+    }
+
+    ol,
+    ul {
+      list-style: none;
+    }
+
+    blockquote,
+    q {
+      quotes: none;
+    }
+
+    blockquote:before,
+    blockquote:after,
+    q:before,
+    q:after {
+      content: '';
+      content: none;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+    }
+
+    body {
+      text-align: center;
+      background: #eee;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #444;
+    }
+
+    nav {
+      position: fixed;
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      background: rgb(245, 245, 245);
+      top: 0;
+      box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .33);
+    }
+
+    footer {
+      box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, .33);
+      box-sizing: border-box;
+      position: fixed;
+      display: grid;
+      padding: 10px 10px 25px;
+      grid-template-columns: 25% 25% 25% 25%;
+      width: 100%;
+      background: rgb(245, 245, 245);
+      bottom: 0;
+    }
+
+    .footer_item {}
+
+    .container {
+      background: white;
+      max-width: 600px;
+      height: 100vh;
+      margin: 20px 0;
+      padding: 50px 30px 0;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .33);
+    }
+
+    .container>p {
+      text-align: justify;
+    }
+
+    #back {
+      /* position: fixed;
+      width: 50px;
+      height: 50px;
+      background: #ffe;
+      border: solid 1px gray;
+      outline: 0;
+      right: 0;
+      top: 0;
+      color: black; */
+    }
+
+    a {
+      text-decoration: none;
+      color: orange;
+    }
+
+    h1 {
+      display: block;
+      width: 100%;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bolder
+    }
+
+    h2 {
+      font-size: 20px;
+    }
+
+    img {
+      margin: 10px;
+      width: 150px;
+      height: 150px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <h1>DeepQ - LINE BOT</h1>
+  </nav>
+  <div class="container">
+    <img src="{{image}}">
+    <h2>{{name}}</h2>
+    <h3>{{status}}</h3>
+    <br>
+    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Numquam laudantium molestias corporis quidem, harum odio eius
+      mollitia amet saepe quaerat eaque sequi voluptates vel iusto. Aliquam molestiae fugiat possimus impedit!
+      <br>
+      <br> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Numquam laudantium molestias corporis quidem, harum odio
+      eius mollitia amet saepe quaerat eaque sequi voluptates vel iusto. Aliquam molestiae fugiat possimus impedit!</p>
+  </div>
+  <footer>
+    <div class="footer_item">
+      <i class="material-icons">home</i>
+      <p>Home</p>
+    </div>
+    <div class="footer_item">
+      <i class="material-icons">alarm</i>
+      <p>Alarm</p>
+    </div>
+    <div class="footer_item">
+      <i class="material-icons">assignment</i>
+      <p>Lists</p>
+    </div>
+    <div class="footer_item" id="back" onclick="window.location.href='https://line.me/ti/p/@ghj3284p'">
+      <i class="material-icons">keyboard_return</i>
+      <p>Back</p>
+    </div>
+  </footer>
+</body>
+
+</html>
