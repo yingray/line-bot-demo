@@ -4,11 +4,8 @@ import dotenv from 'dotenv'
 import fs from 'fs'
 import _ from 'lodash'
 
-import randomChat from './randomChat'
 import bot from './bot'
 
-const users = new Set()
-const chatpool = []
 const app = express()
 
 if (process.env.DEV) {
@@ -66,14 +63,8 @@ app.get('/instantapp', (req, res) => {
 })
 
 app.post('/webhook', middleware(config), async (req, res) => {
-  const userId = req.body.events[0].source.userId
-  users.add(userId)
-  const rc = new randomChat(users, chatpool, req.body.events[0], client)
-  if (rc.isChatting() || req.body.events[0].message.text === 'rematch') {
-    rc.process()
-  } else {
-    await new bot(client, req.body.events).start()
-  }
+  // const userId = req.body.events[0].source.userId
+  await new bot(client, req.body.events).start()
   res.send('A_A')
 })
 
