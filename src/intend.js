@@ -10,6 +10,8 @@ import {
 } from './constants'
 
 import { baseUrl } from './index'
+import ImageMap from './model/ImageMap'
+import imagemapConfig from './config/imagemap.json'
 
 const sticker = {
   id: '325708',
@@ -58,11 +60,11 @@ const later = delay => {
 
 export const getMessageObj = async (e, client) => {
   const intend = getIntend(e)
+  const userId = e.source.userId
   switch (getIntend(e)) {
     case INTEND_GET_STICKER:
       return sticker
     case INTEND_GET_MY_PROFILE:
-      const userId = e.source.userId
       await client.pushMessage(userId, {
         type: 'text',
         text: '請稍候...'
@@ -156,61 +158,28 @@ export const getMessageObj = async (e, client) => {
         }
       }
     case INTEND_GET_IMAGE_MAP:
-      return {
-        type: 'imagemap',
-        baseUrl: `${baseUrl}/static/images/imagemap`,
-        altText: 'This is an imagemap',
-        baseSize: {
-          width: 1040,
-          height: 1560
+      return new ImageMap(imagemapConfig, baseUrl, [
+        {
+          type: 'message',
+          label: 'hello',
+          text: 'hello1'
         },
-        actions: [
-          {
-            type: 'message',
-            label: 'hello',
-            text: 'hello1',
-            area: {
-              x: 0,
-              y: 0,
-              width: 770,
-              height: 400
-            }
-          },
-          {
-            type: 'message',
-            label: 'hello',
-            text: 'hello2',
-            area: {
-              x: 0,
-              y: 400,
-              width: 265,
-              height: 1180
-            }
-          },
-          {
-            type: 'message',
-            label: 'hello',
-            text: 'hello3',
-            area: {
-              x: 265,
-              y: 1160,
-              width: 770,
-              height: 400
-            }
-          },
-          {
-            type: 'message',
-            label: 'hello',
-            text: 'hello4',
-            area: {
-              x: 770,
-              y: 0,
-              width: 265,
-              height: 1180
-            }
-          }
-        ]
-      }
+        {
+          type: 'message',
+          label: 'hello',
+          text: 'hello2'
+        },
+        {
+          type: 'message',
+          label: 'hello',
+          text: 'hello3'
+        },
+        {
+          type: 'uri',
+          label: 'link to profile',
+          linkUri: `${baseUrl}/profile?userId=${userId}`
+        }
+      ])
     case INTEND_GET_INSTANT_APP_LINK:
       return {
         type: 'text',

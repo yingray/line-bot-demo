@@ -58,7 +58,6 @@ app.get('/instantapp', (req, res) => {
 })
 
 app.post('/webhook', middleware(config), async (req, res) => {
-  // const userId = req.body.events[0].source.userId
   await new bot(client, req.body.events).start()
   res.send('A_A')
 })

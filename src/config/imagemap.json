@@ -1,0 +1,35 @@
+{
+  "type": "imagemap",
+  "baseUrl": "/static/images/imagemap",
+  "altText": "This is an imagemap",
+  "baseSize": {
+    "height": 1560,
+    "width": 1040
+  },
+  "areas": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 770,
+      "height": 400
+    },
+    {
+      "x": 0,
+      "y": 400,
+      "width": 265,
+      "height": 1180
+    },
+    {
+      "x": 265,
+      "y": 1160,
+      "width": 770,
+      "height": 400
+    },
+    {
+      "x": 770,
+      "y": 0,
+      "width": 265,
+      "height": 1180
+    }
+  ]
+}
