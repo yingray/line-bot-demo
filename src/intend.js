@@ -14,7 +14,8 @@ import {
   INTEND_GET_BUTTON_TEMPLATE,
   INTENT_LINK_CONTROLLER,
   INTENT_LINK_SPRING,
-  INTENT_UNLINK_MENU
+  INTENT_UNLINK_MENU,
+  INTENT_MULTI_CAST
 } from './constants'
 
 const sticker = {
@@ -35,6 +36,8 @@ const getIntend = e => {
   const target = type === 'message' ? message.text : postback.data
   if (!target) {
     return INTEND_GET_STICKER
+  } else if (target.search(/我想跟大家說/) >= 0) {
+    return INTENT_MULTI_CAST
   }
   switch (target
     .trim()
@@ -76,7 +79,7 @@ const later = delay => {
   })
 }
 
-export const getMessageObj = async (e, client, rich) => {
+export const getMessageObj = async (e, client, rich, users) => {
   const intend = getIntend(e)
   const userId = e.source.userId
   switch (getIntend(e)) {
@@ -257,7 +260,9 @@ export const getMessageObj = async (e, client, rich) => {
     case INTENT_UNLINK_MENU:
       await client.unlinkRichMenuFromUser(userId)
       return
+    case INTENT_MULTI_CAST:
+      return client.multicast(users, { type: 'text', text: `小鯨魚廣播：${e.message.text}` })
     default:
-      return client.pushMessage(userId, { type: 'text', text: `小鯨魚的回話：${e.message.text}` })
+      return client.pushMessage(userId, { type: 'text', text: `小鯨魚回話：${e.message.text}` })
   }
 }

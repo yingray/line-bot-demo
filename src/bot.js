@@ -1,10 +1,11 @@
 import { getMessageObj } from './intend'
 
 class bot {
-  constructor(client, events, rich) {
+  constructor(client, events, rich, users) {
     this.client = client
     this.events = events
     this.rich = rich
+    this.users = users
   }
 
   async start() {
@@ -17,7 +18,7 @@ class bot {
     const userId = e.source.userId
     const client = this.client
     try {
-      const message = await getMessageObj(e, client, this.rich)
+      const message = await getMessageObj(e, client, this.rich, this.users)
     } catch (err) {
       console.log(err)
       return client.pushMessage(e.source.userId, {

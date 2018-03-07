@@ -4,11 +4,10 @@ import dotenv from 'dotenv'
 import fs from 'fs'
 import _ from 'lodash'
 import mustache from 'mustache'
+import firebase from 'firebase'
 
 import bot from './bot'
 import RichMenu from './rich'
-
-const app = express()
 
 if (process.env.DEV) {
   const envConfig = dotenv.parse(fs.readFileSync('.env.dev'))
@@ -17,6 +16,49 @@ if (process.env.DEV) {
   }
 } else {
   dotenv.config()
+}
+
+firebase.initializeApp({
+  apiKey: process.env.FIR_KEY,
+  authDomain: `${process.env.PROJECT_NAME}.firebaseapp.com`,
+  databaseURL: `https://${process.env.PROJECT_NAME}.firebaseio.com`,
+  projectId: process.env.PROJECT_NAME,
+  storageBucket: `${process.env.PROJECT_NAME}.appspot.com`,
+  messagingSenderId: process.env.MSI
+})
+
+let users = []
+const app = express()
+const usersRef = firebase.database().ref('users')
+
+usersRef.on('value', function(snapshot) {
+  updateUsers(snapshot.val())
+})
+
+function updateUsers(allUsers) {
+  users = _.map(allUsers, (v, k) => k)
+}
+
+function getUserProfile(userId) {
+  return firebase
+    .database()
+    .ref('users/' + userId)
+    .once('value')
+    .then(s => s.val())
+}
+
+async function createUserProfile(userId) {
+  console.log('Create New User')
+  const profile = await client.getProfile(userId)
+  await writeUserData(userId, profile)
+  return profile
+}
+
+function writeUserData(userId, profile) {
+  return firebase
+    .database()
+    .ref('users/' + userId)
+    .set(profile)
 }
 
 const config = {
@@ -81,7 +123,13 @@ app.get('/demo/chrome', (req, res) => {
 })
 
 app.post('/webhook', middleware(config), async (req, res) => {
-  await new bot(client, req.body.events, rich).start()
+  const userId = req.body.events[0].source.userId
+  let profile = await getUserProfile(userId)
+  if (!profile) {
+    profile = await createUserProfile(userId)
+  }
+  console.log(profile)
+  await new bot(client, req.body.events, rich, users).start()
   res.send('A_A')
 })
 
