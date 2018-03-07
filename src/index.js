@@ -69,7 +69,7 @@ app.get('/demo/instantapp', (req, res) => {
 app.get('/demo/chrome', (req, res) => {
   const userId = req.query.userId
   // Todo: check user's system
-  const redirectUrl = `intent://${baseUrl}/profile?userId=${userId}#Intent;scheme=https;package=com.android.chrome;end`
+  const redirectUrl = `intent://${baseUrl.replace(/https:\/\//, '')}/profile?userId=${userId}#Intent;scheme=https;package=com.android.chrome;end`
   res.redirect(redirectUrl)
 })
 
