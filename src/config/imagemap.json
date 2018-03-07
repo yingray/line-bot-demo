@@ -1,6 +1,6 @@
 {
   "type": "imagemap",
-  "baseUrl": "/static/images/imagemap",
+  "baseUrl": "/static/images/leaf",
   "altText": "This is an imagemap",
   "baseSize": {
     "height": 1560,

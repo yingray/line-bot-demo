@@ -169,24 +169,24 @@ export const getMessageObj = async (e, client) => {
     case INTEND_GET_IMAGE_MAP:
       return new ImageMap(imagemapConfig, baseUrl, [
         {
-          type: 'message',
-          label: 'hello',
-          text: 'hello1'
-        },
-        {
-          type: 'message',
-          label: 'hello',
-          text: 'hello2'
-        },
-        {
-          type: 'message',
-          label: 'hello',
-          text: 'hello3'
+          type: 'uri',
+          label: 'link to line',
+          linkUri: `${baseUrl}/profile?userId=${userId}`
         },
         {
           type: 'uri',
-          label: 'link to profile',
-          linkUri: `${baseUrl}/profile?userId=${userId}`
+          label: 'link to chrome',
+          linkUri: `${baseUrl}/demo/chrome?userId=${userId}`
+        },
+        {
+          type: 'uri',
+          label: 'link to dl',
+          linkUri: `${baseUrl}/demo/dynamiclink?userId=${userId}`
+        },
+        {
+          type: 'uri',
+          label: 'link to instant',
+          linkUri: `${baseUrl}/demo/instantapp?userId=${userId}`
         }
       ])
     case INTEND_GET_INSTANT_APP_LINK:
