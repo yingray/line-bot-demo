@@ -1,3 +1,6 @@
+import { baseUrl } from './index'
+import ImageMap from './model/ImageMap'
+import imagemapConfig from './config/imagemap.json'
 import {
   INTEND_GET_STICKER,
   INTEND_ECHO,
@@ -6,12 +9,10 @@ import {
   INTEND_GET_POSTBACK,
   INTEND_GET_BEACON,
   INTEND_GET_IMAGE_MAP,
-  INTEND_GET_INSTANT_APP_LINK
+  INTEND_GET_INSTANT_APP_LINK,
+  INTEND_GET_DYNAMIC_LINK,
+  INTEND_GET_BUTTON_TEMPLATE
 } from './constants'
-
-import { baseUrl } from './index'
-import ImageMap from './model/ImageMap'
-import imagemapConfig from './config/imagemap.json'
 
 const sticker = {
   id: '325708',
@@ -29,7 +30,10 @@ const getEcho = message => {}
 const getIntend = e => {
   const { message } = e
   if (message.text) {
-    switch (message.text.toLowerCase()) {
+    switch (message.text
+      .trim()
+      .toLowerCase()
+      .replace(/\ /g, '')) {
       case '去睡覺':
         return INTEND_GET_STICKER
       case 'profile':
@@ -44,6 +48,11 @@ const getIntend = e => {
         return INTEND_GET_IMAGE_MAP
       case 'instantapp':
         return INTEND_GET_INSTANT_APP_LINK
+      case 'dynamiclink':
+        return INTEND_GET_DYNAMIC_LINK
+      case 'button':
+      case 'template':
+        return INTEND_GET_BUTTON_TEMPLATE
       default:
         return INTEND_ECHO
     }
@@ -183,7 +192,49 @@ export const getMessageObj = async (e, client) => {
     case INTEND_GET_INSTANT_APP_LINK:
       return {
         type: 'text',
-        text: `${baseUrl}/instantapp`
+        text: `${baseUrl}/demo/instantapp?userId=${userId}`
+      }
+    case INTEND_GET_DYNAMIC_LINK:
+      return {
+        type: 'text',
+        text: `${baseUrl}/demo/dynamiclink?userId=${userId}`
+      }
+    case INTEND_GET_BUTTON_TEMPLATE:
+      return {
+        type: 'template',
+        altText: 'This is a buttons template',
+        template: {
+          type: 'buttons',
+          title: 'Button Template Demo',
+          text: 'Please select',
+          defaultAction: {
+            type: 'uri',
+            label: 'View detail',
+            uri: 'http://example.com/page/123'
+          },
+          actions: [
+            {
+              type: 'uri',
+              label: 'LINE browser',
+              uri: `${baseUrl}/profile?userId=${userId}`
+            },
+            {
+              type: 'uri',
+              label: 'Chrome browser',
+              uri: `${baseUrl}/demo/chrome?userId=${userId}`
+            },
+            {
+              type: 'uri',
+              label: 'Dynamic link',
+              uri: `${baseUrl}/demo/dynamiclink?userId=${userId}`
+            },
+            {
+              type: 'uri',
+              label: 'Instant App link',
+              uri: `${baseUrl}/demo/instantapp?userId=${userId}`
+            }
+          ]
+        }
       }
     default:
       return { type: 'text', text: `小鯨魚的回話：${e.message.text}` }

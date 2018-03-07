@@ -1,5 +1,5 @@
 import express from 'express'
-import { middleware, JSONParseError, SignatureValidationFailed, Client } from '@line/bot-sdk'
+import { middleware, Client } from '@line/bot-sdk'
 import dotenv from 'dotenv'
 import fs from 'fs'
 import _ from 'lodash'
@@ -51,10 +51,26 @@ app.get('/profile', async (req, res) => {
   }
 })
 
-app.get('/instantapp', (req, res) => {
-  res.redirect(
+app.get('/demo/dynamiclink', (req, res) => {
+  const userId = req.query.userId
+  const appCode = process.env.APP_CODE
+  const apn = process.env.APN
+  const redirectUrl = `https://${appCode}.app.goo.gl/?apn=${apn}&link=${baseUrl}/profile?userId=${userId}`
+  res.redirect(redirectUrl)
+})
+
+app.get('/demo/instantapp', (req, res) => {
+  const userId = req.query.userId
+  const redirectUrl =
     'intent://hotpads.com/indigo-at-twelve-west-portland-or-97205-skfrgn/pad#Intent;scheme=https;end'
-  )
+  res.redirect(redirectUrl)
+})
+
+app.get('/demo/chrome', (req, res) => {
+  const userId = req.query.userId
+  // Todo: check user's system
+  const redirectUrl = `intent://${baseUrl}/profile?userId=${userId}#Intent;scheme=https;package=com.android.chrome;end`
+  res.redirect(redirectUrl)
 })
 
 app.post('/webhook', middleware(config), async (req, res) => {
