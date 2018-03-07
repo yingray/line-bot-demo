@@ -28,8 +28,8 @@ const getProfileMessage = userId => {}
 const getEcho = message => {}
 
 const getIntend = e => {
-  const { message } = e
-  if (message.text) {
+  const { type, message } = e
+  if (type === 'message' && message.text) {
     switch (message.text
       .trim()
       .toLowerCase()
@@ -56,6 +56,8 @@ const getIntend = e => {
       default:
         return INTEND_ECHO
     }
+  } else if (type === 'postback') {
+    return INTEND_GET_STICKER
   } else {
     return INTEND_GET_STICKER
   }
