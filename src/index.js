@@ -6,6 +6,7 @@ import _ from 'lodash'
 import mustache from 'mustache'
 
 import bot from './bot'
+import RichMenu from './rich'
 
 const app = express()
 
@@ -30,6 +31,8 @@ const client = new Client(config)
 
 app.use('/static', express.static('static'))
 app.use('/.well-known', express.static('static/.well-known'))
+
+const rich = new RichMenu(client)
 
 app.get('/profile', async (req, res) => {
   const { userId } = req.query
@@ -77,7 +80,7 @@ app.get('/demo/chrome', (req, res) => {
 })
 
 app.post('/webhook', middleware(config), async (req, res) => {
-  await new bot(client, req.body.events).start()
+  await new bot(client, req.body.events, rich).start()
   res.send('A_A')
 })
 

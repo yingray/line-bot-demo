@@ -11,7 +11,9 @@ import {
   INTEND_GET_IMAGE_MAP,
   INTEND_GET_INSTANT_APP_LINK,
   INTEND_GET_DYNAMIC_LINK,
-  INTEND_GET_BUTTON_TEMPLATE
+  INTEND_GET_BUTTON_TEMPLATE,
+  INTENT_LINK_CONTROLLER,
+  INTENT_UNLINK_CONTROLLER
 } from './constants'
 
 const sticker = {
@@ -53,6 +55,10 @@ const getIntend = e => {
       case 'button':
       case 'template':
         return INTEND_GET_BUTTON_TEMPLATE
+      case 'linkcontroller':
+        return INTENT_LINK_CONTROLLER
+      case 'unlinkcontroller':
+        return INTENT_UNLINK_CONTROLLER
       default:
         return INTEND_ECHO
     }
@@ -69,7 +75,7 @@ const later = delay => {
   })
 }
 
-export const getMessageObj = async (e, client) => {
+export const getMessageObj = async (e, client, rich) => {
   const intend = getIntend(e)
   const userId = e.source.userId
   switch (getIntend(e)) {
@@ -238,6 +244,12 @@ export const getMessageObj = async (e, client) => {
           ]
         }
       }
+    case INTENT_LINK_CONTROLLER:
+      await client.linkRichMenuToUser(userId, rich.id)
+      return { type: 'text', text: `小鯨魚開啟控制器` }
+    case INTENT_UNLINK_CONTROLLER:
+      await client.unlinkRichMenuFromUser(userId)
+      return { type: 'text', text: `小鯨魚關閉控制器` }
     default:
       return { type: 'text', text: `小鯨魚的回話：${e.message.text}` }
   }
