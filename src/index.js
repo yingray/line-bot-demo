@@ -68,8 +68,10 @@ app.get('/demo/instantapp', (req, res) => {
 
 app.get('/demo/chrome', (req, res) => {
   const userId = req.query.userId
-  // Todo: check user's system
-  const redirectUrl = `intent://${baseUrl.replace(/https:\/\//, '')}/profile?userId=${userId}#Intent;scheme=https;package=com.android.chrome;end`
+  let redirectUrl = `intent://${baseUrl.replace(/https:\/\//, '')}/profile?userId=${userId}#Intent;scheme=https;package=com.android.chrome;end`
+  if(req.headers['user-agent'].search(/iPhone/g) > 0 || req.headers['user-agent'].search(/iPad/g) > 0) {
+    redirectUrl = `googlechrome://${baseUrl.replace(/https:\/\//, '')}/profile?userId=${userId}`
+  }
   res.redirect(redirectUrl)
 })
 
