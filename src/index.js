@@ -62,8 +62,8 @@ app.get('/demo/dynamiclink', (req, res) => {
 
 app.get('/demo/instantapp', (req, res) => {
   const userId = req.query.userId
-  const redirectUrl =
-    'intent://hotpads.com/indigo-at-twelve-west-portland-or-97205-skfrgn/pad#Intent;scheme=https;end'
+  // const redirectUrl = 'intent://hotpads.com/indigo-at-twelve-west-portland-or-97205-skfrgn/pad#Intent;scheme=https;end'
+  const redirectUrl = `${baseUrl}/instant?userId=${userId}`
   res.redirect(redirectUrl)
 })
 
