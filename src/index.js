@@ -22,7 +22,7 @@ const config = {
   channelAccessToken: process.env.ACCESS_TOKEN,
   channelSecret: process.env.SECRET
 }
-const profileTemplate = fs.readFileSync('./src/templates/profile.html', 'utf8')
+const profileTemplate = fs.readFileSync('./static/templates/profile.html', 'utf8')
 
 export const baseUrl = process.env.BASE_URL
 

@@ -158,31 +158,55 @@ export const getMessageObj = async (e, client) => {
     case INTEND_GET_IMAGE_MAP:
       return {
         type: 'imagemap',
-        baseUrl: 'https://via.placeholder.com/1040x1040.jpg',
+        baseUrl: `${baseUrl}/static/images/imagemap`,
         altText: 'This is an imagemap',
         baseSize: {
-          height: 1040,
-          width: 1040
+          width: 1040,
+          height: 1560
         },
         actions: [
           {
-            type: 'uri',
-            linkUri: 'https://example.com/',
+            type: 'message',
+            label: 'hello',
+            text: 'hello1',
             area: {
               x: 0,
               y: 0,
-              width: 520,
-              height: 1040
+              width: 770,
+              height: 400
             }
           },
           {
             type: 'message',
-            text: 'Hello',
+            label: 'hello',
+            text: 'hello2',
             area: {
-              x: 520,
+              x: 0,
+              y: 400,
+              width: 265,
+              height: 1180
+            }
+          },
+          {
+            type: 'message',
+            label: 'hello',
+            text: 'hello3',
+            area: {
+              x: 265,
+              y: 1160,
+              width: 770,
+              height: 400
+            }
+          },
+          {
+            type: 'message',
+            label: 'hello',
+            text: 'hello4',
+            area: {
+              x: 770,
               y: 0,
-              width: 520,
-              height: 1040
+              width: 265,
+              height: 1180
             }
           }
         ]
