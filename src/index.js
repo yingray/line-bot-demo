@@ -55,7 +55,8 @@ app.get('/demo/dynamiclink', (req, res) => {
   const userId = req.query.userId
   const appCode = process.env.APP_CODE
   const apn = process.env.APN
-  const redirectUrl = `https://${appCode}.app.goo.gl/?apn=${apn}&link=${baseUrl}/profile?userId=${userId}`
+  const link = `${baseUrl}/profile?userId=${userId}`
+  const redirectUrl = `https://${appCode}.app.goo.gl/?apn=${apn}&link=${link}&afl=${link}`
   res.redirect(redirectUrl)
 })
 
