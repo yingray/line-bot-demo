@@ -13,7 +13,8 @@ import {
   INTEND_GET_DYNAMIC_LINK,
   INTEND_GET_BUTTON_TEMPLATE,
   INTENT_LINK_CONTROLLER,
-  INTENT_UNLINK_CONTROLLER
+  INTENT_LINK_SPRING,
+  INTENT_UNLINK_MENU
 } from './constants'
 
 const sticker = {
@@ -30,42 +31,42 @@ const getProfileMessage = userId => {}
 const getEcho = message => {}
 
 const getIntend = e => {
-  const { type, message } = e
-  if (type === 'message' && message.text) {
-    switch (message.text
-      .trim()
-      .toLowerCase()
-      .replace(/\ /g, '')) {
-      case '去睡覺':
-        return INTEND_GET_STICKER
-      case 'profile':
-        return INTEND_GET_MY_PROFILE
-      case 'menu':
-        return INTEND_GET_POSTBACK
-      case 'beacon':
-        return INTEND_GET_BEACON
-      case 'location':
-        return INTEND_GET_LOCATION
-      case 'imagemap':
-        return INTEND_GET_IMAGE_MAP
-      case 'instantapp':
-        return INTEND_GET_INSTANT_APP_LINK
-      case 'dynamiclink':
-        return INTEND_GET_DYNAMIC_LINK
-      case 'button':
-      case 'template':
-        return INTEND_GET_BUTTON_TEMPLATE
-      case 'linkcontroller':
-        return INTENT_LINK_CONTROLLER
-      case 'unlinkcontroller':
-        return INTENT_UNLINK_CONTROLLER
-      default:
-        return INTEND_ECHO
-    }
-  } else if (type === 'postback') {
+  const { type, message, postback } = e
+  const target = type === 'message' ? message.text : postback.data
+  if (!target) {
     return INTEND_GET_STICKER
-  } else {
-    return INTEND_GET_STICKER
+  }
+  switch (target
+    .trim()
+    .toLowerCase()
+    .replace(/\ /g, '')) {
+    case '去睡覺':
+      return INTEND_GET_STICKER
+    case 'profile':
+      return INTEND_GET_MY_PROFILE
+    case 'menu':
+      return INTEND_GET_POSTBACK
+    case 'beacon':
+      return INTEND_GET_BEACON
+    case 'location':
+      return INTEND_GET_LOCATION
+    case 'imagemap':
+      return INTEND_GET_IMAGE_MAP
+    case 'instantapp':
+      return INTEND_GET_INSTANT_APP_LINK
+    case 'dynamiclink':
+      return INTEND_GET_DYNAMIC_LINK
+    case 'button':
+    case 'template':
+      return INTEND_GET_BUTTON_TEMPLATE
+    case 'linkspring':
+      return INTENT_LINK_SPRING
+    case 'linkcontroller':
+      return INTENT_LINK_CONTROLLER
+    case 'unlinkmenu':
+      return INTENT_UNLINK_MENU
+    default:
+      return INTEND_ECHO
   }
 }
 
@@ -80,7 +81,7 @@ export const getMessageObj = async (e, client, rich) => {
   const userId = e.source.userId
   switch (getIntend(e)) {
     case INTEND_GET_STICKER:
-      return sticker
+      return client.pushMessage(userId, sticker)
     case INTEND_GET_MY_PROFILE:
       await client.pushMessage(userId, {
         type: 'text',
@@ -93,21 +94,21 @@ export const getMessageObj = async (e, client, rich) => {
         text: `${baseUrl}/profile?userId=${userId}`
       })
       console.log(profile)
-      return {
+      return client.pushMessage(userId, {
         type: 'text',
         text: `Name: ${profile.displayName} \nUserID: ${userId} \nStatus: 
         ${profile.statusMessage} \nAvatar: ${profile.pictureUrl}`
-      }
+      })
     case INTEND_GET_LOCATION:
-      return {
+      return client.pushMessage(userId, {
         type: 'location',
         title: '小鯨魚的房間',
         address: '〒150-0002 東京都渋谷区渋谷２丁目２１−１',
         latitude: 35.65910807942215,
         longitude: 139.70372892916203
-      }
+      })
     case INTEND_GET_POSTBACK:
-      return {
+      return client.pushMessage(userId, {
         type: 'template',
         altText: 'this is a carousel template',
         template: {
@@ -173,42 +174,45 @@ export const getMessageObj = async (e, client, rich) => {
           imageAspectRatio: 'rectangle',
           imageSize: 'cover'
         }
-      }
+      })
     case INTEND_GET_IMAGE_MAP:
-      return new ImageMap(imagemapConfig, baseUrl, [
-        {
-          type: 'uri',
-          label: 'link to line',
-          linkUri: `${baseUrl}/profile?userId=${userId}`
-        },
-        {
-          type: 'uri',
-          label: 'link to chrome',
-          linkUri: `${baseUrl}/demo/chrome?userId=${userId}`
-        },
-        {
-          type: 'uri',
-          label: 'link to dl',
-          linkUri: `${baseUrl}/demo/dynamiclink?userId=${userId}`
-        },
-        {
-          type: 'uri',
-          label: 'link to instant',
-          linkUri: `${baseUrl}/demo/instantapp?userId=${userId}`
-        }
-      ])
+      return client.pushMessage(
+        userId,
+        new ImageMap(imagemapConfig, baseUrl, [
+          {
+            type: 'uri',
+            label: 'link to line',
+            linkUri: `${baseUrl}/profile?userId=${userId}`
+          },
+          {
+            type: 'uri',
+            label: 'link to chrome',
+            linkUri: `${baseUrl}/demo/chrome?userId=${userId}`
+          },
+          {
+            type: 'uri',
+            label: 'link to dl',
+            linkUri: `${baseUrl}/demo/dynamiclink?userId=${userId}`
+          },
+          {
+            type: 'uri',
+            label: 'link to instant',
+            linkUri: `${baseUrl}/demo/instantapp?userId=${userId}`
+          }
+        ])
+      )
     case INTEND_GET_INSTANT_APP_LINK:
-      return {
+      return client.pushMessage(userId, {
         type: 'text',
         text: `${baseUrl}/demo/instantapp?userId=${userId}`
-      }
+      })
     case INTEND_GET_DYNAMIC_LINK:
-      return {
+      return client.pushMessage(userId, {
         type: 'text',
         text: `${baseUrl}/demo/dynamiclink?userId=${userId}`
-      }
+      })
     case INTEND_GET_BUTTON_TEMPLATE:
-      return {
+      return client.pushMessage(userId, {
         type: 'template',
         altText: 'This is a buttons template',
         template: {
@@ -243,14 +247,17 @@ export const getMessageObj = async (e, client, rich) => {
             }
           ]
         }
-      }
+      })
+    case INTENT_LINK_SPRING:
+      await client.linkRichMenuToUser(userId, rich.spring_id)
+      return
     case INTENT_LINK_CONTROLLER:
-      await client.linkRichMenuToUser(userId, rich.id)
-      return { type: 'text', text: `小鯨魚開啟控制器` }
-    case INTENT_UNLINK_CONTROLLER:
+      await client.linkRichMenuToUser(userId, rich.controller_id)
+      return
+    case INTENT_UNLINK_MENU:
       await client.unlinkRichMenuFromUser(userId)
-      return { type: 'text', text: `小鯨魚關閉控制器` }
+      return
     default:
-      return { type: 'text', text: `小鯨魚的回話：${e.message.text}` }
+      return client.pushMessage(userId, { type: 'text', text: `小鯨魚的回話：${e.message.text}` })
   }
 }

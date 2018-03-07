@@ -75,8 +75,8 @@
             "height":367
         },
         "action":{
-            "type":"message",
-            "text":"btn a"
+            "type":"postback",
+            "data":"link spring"
         }
       }
   ]

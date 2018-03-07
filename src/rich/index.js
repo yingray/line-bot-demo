@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import controller from './controller.json'
+import spring from './spring.json'
 import fs from 'fs'
 
-class RichMenu {
+class RichMenus {
   constructor(client) {
-    this.id = ''
+    this.controller_id = ''
+    this.spring_id = ''
     this.init(client)
   }
 
@@ -12,18 +14,16 @@ class RichMenu {
     const list = await client.getRichMenuList()
     console.log(list)
     list.forEach(element => {
-      if (element.name === 'Controller') {
-        client.deleteRichMenu(element.richMenuId)
-      }
+      client.deleteRichMenu(element.richMenuId)
     })
-    this.id = await client.createRichMenu(controller)
-    const image = fs.createReadStream('./static/images/rich/controller.jpg')
-    await client.setRichMenuImage(this.id, image, 'image/jpeg')
+    this.controller_id = await client.createRichMenu(controller)
+    const controller_image = fs.createReadStream('./static/images/rich/controller.jpg')
+    await client.setRichMenuImage(this.controller_id, controller_image, 'image/jpeg')
+    this.spring_id = await client.createRichMenu(spring)
+    const spring_image = fs.createReadStream('./static/images/rich/spring.jpg')
+    await client.setRichMenuImage(this.spring_id, spring_image, 'image/jpeg')
   }
 
-  getRichId() {
-    return this.id
-  }
 }
 
-export default RichMenu
+export default RichMenus

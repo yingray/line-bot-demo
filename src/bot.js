@@ -18,7 +18,6 @@ class bot {
     const client = this.client
     try {
       const message = await getMessageObj(e, client, this.rich)
-      return client.pushMessage(e.source.userId, message)
     } catch (err) {
       console.log(err)
       return client.pushMessage(e.source.userId, {
