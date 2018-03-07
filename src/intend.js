@@ -1,5 +1,6 @@
 import { baseUrl } from './index'
 import ImageMap from './model/ImageMap'
+import { isSpeaking, getSpeakingText } from './speak'
 import imagemapConfig from './config/imagemap.json'
 import {
   INTEND_GET_STICKER,
@@ -16,8 +17,7 @@ import {
   INTENT_LINK_SPRING,
   INTENT_UNLINK_MENU,
   INTENT_MULTI_CAST,
-  INTENT_SAY_HI,
-  INTENT_SAD
+  INTEND_SPEAK
 } from './constants'
 
 const sticker = {
@@ -39,14 +39,15 @@ const getIntend = e => {
     return INTEND_GET_STICKER
   }
   const target = type === 'message' ? message.text : postback.data
+  if (!target) {
+    return INTEND_GET_STICKER
+  }
+  console.log(isSpeaking(target))
+  if (isSpeaking(target)) {
+    return INTEND_SPEAK
+  }
   if (target.search(/我想跟大家說/) >= 0) {
     return INTENT_MULTI_CAST
-  } else if (target.search(/鯨魚/) >= 0) {
-    return INTENT_SAY_HI
-  } else if (target.search(/幹/) >= 0 && target.search(/幹嘛/) < 0) {
-    return INTENT_SAD
-  } else if (target.search(/媽的/) >= 0) {
-    return INTENT_SAD
   }
   switch (target
     .trim()
@@ -271,14 +272,8 @@ export const getMessageObj = async (e, client, rich, users) => {
       return
     case INTENT_MULTI_CAST:
       return client.multicast(users, { type: 'text', text: `小鯨魚廣播：${e.message.text}` })
-    case INTENT_SAY_HI:
-      const strings = ['你好', '什麼事？', '愛你喔！', '叫我嗎？', '嗨！', '安安！', '真的很愛我喔A_A']
-      const string = strings[Math.floor(Math.random() * strings.length)]
-      return client.pushMessage(userId, { type: 'text', text: string })
-    case INTENT_SAD:
-      const items = ['抱歉...', '別這樣...', '對不起麻...', 'QQ', '不要欺負可憐小鯨魚T_T']
-      const item = items[Math.floor(Math.random() * items.length)]
-      return client.pushMessage(userId, { type: 'text', text: item })
+    case INTEND_SPEAK:
+      return client.pushMessage(userId, { type: 'text', text: getSpeakingText(e.message.text) })
     default:
       return client.pushMessage(userId, { type: 'text', text: `小鯨魚回話：${e.message.text}` })
   }
