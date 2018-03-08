@@ -42,10 +42,6 @@ const getIntend = e => {
   if (!target) {
     return INTEND_GET_STICKER
   }
-  console.log(isSpeaking(target))
-  if (isSpeaking(target)) {
-    return INTEND_SPEAK
-  }
   if (target.search(/我想跟大家說/) >= 0) {
     return INTENT_MULTI_CAST
   }
@@ -79,6 +75,9 @@ const getIntend = e => {
     case 'unlinkmenu':
       return INTENT_UNLINK_MENU
     default:
+      if (isSpeaking(target)) {
+        return INTEND_SPEAK
+      }
       return INTEND_ECHO
   }
 }
