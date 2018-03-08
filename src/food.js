@@ -1,10 +1,10 @@
 import fetch from 'node-fetch'
 import _ from 'lodash'
 
-export const getFoodMessages = async (long, lat) => {
+export const getFoodMessages = async (long, lat, cafe) => {
   let messages
   try {
-    const item = await searchFood(long, lat)
+    const item = await searchFood(long, lat, cafe)
     messages = [
       {
         type: 'text',
@@ -50,14 +50,14 @@ const giveComment = rating => {
   }
 }
 
-const searchFood = async (long, lat) => {
+const searchFood = async (long, lat, cafe) => {
   const { results } = await fetch(
     `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${long}&radius=500&types=food&key=${
       process.env.GOOGLE_API_KEY
     }`
   ).then(response => response.json())
   console.log(results)
-  const items = _.filter(results, i => i.types.includes('food'))
+  const items = _.filter(results, i => cafe ? i.types.includes('cafe') : i.types.includes('food'))
   const item = items[Math.floor(Math.random() * items.length)]
   console.log(item)
   return item

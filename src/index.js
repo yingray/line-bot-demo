@@ -29,7 +29,8 @@ firebase.initializeApp({
 
 let users = []
 const app = express()
-const usersRef = firebase.database().ref('users')
+export let usersProfile = []
+export const usersRef = firebase.database().ref('users')
 
 usersRef.on('value', function(snapshot) {
   updateUsers(snapshot.val())
@@ -37,6 +38,7 @@ usersRef.on('value', function(snapshot) {
 
 function updateUsers(allUsers) {
   users = _.map(allUsers, (v, k) => k)
+  usersProfile = _.map(allUsers, (v, k) => v)
 }
 
 function getUserProfile(userId) {

@@ -1,4 +1,4 @@
-import { baseUrl } from './index'
+import { baseUrl, usersRef, usersProfile } from './index'
 import ImageMap from './model/ImageMap'
 import { isSpeaking, getSpeakingText } from './speak'
 import imagemapConfig from './config/imagemap.json'
@@ -20,6 +20,7 @@ import {
   INTENT_MULTI_CAST,
   INTEND_SPEAK,
   INTEND_GET_FOOD,
+  INTEND_GET_CAFE,
   INTENT_FOLLOW,
   INTENT_UNFOLLOW
 } from './constants'
@@ -54,6 +55,9 @@ const getIntend = e => {
   }
   if (target.search(/我想跟大家說/) >= 0) {
     return INTENT_MULTI_CAST
+  }
+  if (target.search(/咖啡/) >= 0) {
+    return INTEND_GET_CAFE
   }
   switch (target
     .trim()
@@ -285,15 +289,56 @@ export const getMessageObj = async (e, client, rich, users) => {
       return client.multicast(users, { type: 'text', text: `小鯨魚廣播：${e.message.text}` })
     case INTEND_SPEAK:
       return client.pushMessage(userId, { type: 'text', text: getSpeakingText(e.message.text) })
+    case INTEND_GET_CAFE:
+      await client.pushMessage(userId, {
+        type: 'text',
+        text: getSpeakingText('get_eating_speaking')
+      })
+      const location = getUserProfile(userId).location
+      console.log(location)
+      if (location) {
+        const msgs = await getFoodMessages(location.longitude, location.latitude, true)
+        msgs.forEach(msg => client.pushMessage(userId, msg))
+      } else {
+        return client.pushMessage(userId, { type: 'text', text: '給我一下你的位置' })
+      }
+      return
     case INTEND_GET_FOOD:
       await client.pushMessage(userId, {
         type: 'text',
         text: getSpeakingText('get_eating_speaking')
       })
-      const messages = await getFoodMessages(e.message.longitude, e.message.latitude)
+      const { longitude, latitude } = e.message
+      const messages = await getFoodMessages(longitude, latitude, false)
       messages.forEach(message => client.pushMessage(userId, message))
+      setFirebaseProfile(userId, longitude, latitude)
       return
     default:
       return client.pushMessage(userId, { type: 'text', text: `小鯨魚回話：${e.message.text}` })
   }
+}
+
+const getUserProfile = userId => {
+  let profile
+  usersProfile.forEach((p, i) => {
+    if (p.userId === userId) {
+      profile = p
+    }
+  })
+  return profile
+}
+
+const setFirebaseProfile = (userId, longitude, latitude) => {
+  let profile
+  usersProfile.forEach((p, i) => {
+    if (p.userId === userId) {
+      profile = Object.assign({}, p, {
+        location: {
+          longitude,
+          latitude
+        }
+      })
+    }
+  })
+  usersRef.child(userId).set(profile)
 }
