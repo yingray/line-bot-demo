@@ -2,6 +2,7 @@ import { baseUrl } from './index'
 import ImageMap from './model/ImageMap'
 import { isSpeaking, getSpeakingText } from './speak'
 import imagemapConfig from './config/imagemap.json'
+import { getFoodMessages } from './food'
 import {
   INTEND_GET_STICKER,
   INTEND_ECHO,
@@ -17,7 +18,8 @@ import {
   INTENT_LINK_SPRING,
   INTENT_UNLINK_MENU,
   INTENT_MULTI_CAST,
-  INTEND_SPEAK
+  INTEND_SPEAK,
+  INTEND_GET_FOOD
 } from './constants'
 
 const sticker = {
@@ -37,6 +39,9 @@ const getIntend = e => {
   const { type, message, postback } = e
   if (type !== 'message' && type !== 'postback') {
     return INTEND_GET_STICKER
+  }
+  if (type === 'message' && message.type === 'location') {
+    return INTEND_GET_FOOD
   }
   const target = type === 'message' ? message.text : postback.data
   if (!target) {
@@ -273,6 +278,11 @@ export const getMessageObj = async (e, client, rich, users) => {
       return client.multicast(users, { type: 'text', text: `小鯨魚廣播：${e.message.text}` })
     case INTEND_SPEAK:
       return client.pushMessage(userId, { type: 'text', text: getSpeakingText(e.message.text) })
+    case INTEND_GET_FOOD:
+      await client.pushMessage(userId, { type: 'text', text: '幫你找吃的...' })
+      const messages = await getFoodMessages(e.message.longitude, e.message.latitude)
+      messages.forEach(message => client.pushMessage(userId, message))
+      return
     default:
       return client.pushMessage(userId, { type: 'text', text: `小鯨魚回話：${e.message.text}` })
   }
