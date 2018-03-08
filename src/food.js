@@ -2,30 +2,40 @@ import fetch from 'node-fetch'
 import _ from 'lodash'
 
 export const getFoodMessages = async (long, lat) => {
-  const item = await searchFood(long, lat)
-  const messages = [
-    {
-      type: 'text',
-      text: giveComment(item.rating)
-    },
-    {
-      type: 'location',
-      title: item.name,
-      address: item.vicinity,
-      latitude: item.geometry.location.lat,
-      longitude: item.geometry.location.lng
+  let messages
+  try {
+    const item = await searchFood(long, lat)
+    messages = [
+      {
+        type: 'text',
+        text: giveComment(item.rating)
+      },
+      {
+        type: 'location',
+        title: item.name,
+        address: item.vicinity,
+        latitude: item.geometry.location.lat,
+        longitude: item.geometry.location.lng
+      }
+    ]
+    if (item.photos.length > 0) {
+      messages.push({
+        type: 'image',
+        originalContentUrl: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&photoreference=${
+          item.photos[0].photo_reference
+        }&key=${process.env.GOOGLE_API_KEY}`,
+        previewImageUrl: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=240&photoreference=${
+          item.photos[0].photo_reference
+        }&key=${process.env.GOOGLE_API_KEY}`
+      })
     }
-  ]
-  if (item.photos.length > 0) {
-    messages.push({
-      type: 'image',
-      originalContentUrl: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&photoreference=${
-        item.photos[0].photo_reference
-      }&key=${process.env.GOOGLE_API_KEY}`,
-      previewImageUrl: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=240&photoreference=${
-        item.photos[0].photo_reference
-      }&key=${process.env.GOOGLE_API_KEY}`
-    })
+  } catch (e) {
+    messages = [
+      {
+        type: 'text',
+        text: '嗯... 我想不到'
+      }
+    ]
   }
   return messages
 }
