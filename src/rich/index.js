@@ -12,7 +12,24 @@ class RichMenus {
 
   async init(client) {
     const list = await client.getRichMenuList()
-    console.log(list)
+    const that = this
+    if (process.env.RICH_MENU_RESET) {
+      await reset()
+    } else {
+      list.forEach(element => {
+        switch (element.name) {
+          case 'Controller':
+            that.controller_id = element.richMenuId
+            break
+          default:
+            that.spring_id = element.richMenuId
+            break
+        }
+      })
+    }
+  }
+
+  async reset() {
     list.forEach(element => {
       client.deleteRichMenu(element.richMenuId)
     })
@@ -23,7 +40,6 @@ class RichMenus {
     const spring_image = fs.createReadStream('./static/images/rich/spring.jpg')
     await client.setRichMenuImage(this.spring_id, spring_image, 'image/jpeg')
   }
-
 }
 
 export default RichMenus
