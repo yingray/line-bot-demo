@@ -279,7 +279,7 @@ export const getMessageObj = async (e, client, rich, users) => {
     case INTEND_SPEAK:
       return client.pushMessage(userId, { type: 'text', text: getSpeakingText(e.message.text) })
     case INTEND_GET_FOOD:
-      await client.pushMessage(userId, { type: 'text', text: '幫你找吃的...' })
+      await client.pushMessage(userId, { type: 'text', text: getSpeakingText('get_eating_speaking') })
       const messages = await getFoodMessages(e.message.longitude, e.message.latitude)
       messages.forEach(message => client.pushMessage(userId, message))
       return

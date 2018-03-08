@@ -13,7 +13,8 @@ const dirMap = {
   sad: ['抱歉...', '別這樣...', '對不起麻...', 'QQ', '不要欺負可憐小鯨魚T_T'],
   eatWhat: ['好啦我幫你想，你把你位置傳給我！😠', '隨便', '你想', '人生好難'],
   whoAreU: ['小鯨魚', '本鯨魚', '我是小鯨魚，請多多指教', '叫 我 小 鯨 魚 ！'],
-  haha: ['笑什麼', '什麼東西這麼好笑，我想知道']
+  haha: ['笑什麼', '什麼東西這麼好笑，我想知道'],
+  waitToEat: ['幫你找吃的...', '煩欸，每次都要我找...', '好啦，幫你想就是了...', '又要我想...QQ']
 }
 
 const list = _.flattenDeep(_.map(dir, v => v))
@@ -30,13 +31,17 @@ export const isSpeaking = text => {
 
 export const getSpeakingText = text => {
   let items
-  _.map(dir, (v, k) => {
-    _.map(v, element => {
-      if (text.search(new RegExp(element)) >= 0) {
-        items = dirMap[k]
-      }
+  if(text === 'get_eating_speaking') {
+    items = dirMap['waitToEat']
+  } else {
+    _.map(dir, (v, k) => {
+      _.map(v, element => {
+        if (text.search(new RegExp(element)) >= 0) {
+          items = dirMap[k]
+        }
+      })
     })
-  })
+  }
   const item = items[Math.floor(Math.random() * items.length)]
   return item
 }

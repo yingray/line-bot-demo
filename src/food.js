@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import _ from 'lodash'
 
 export const getFoodMessages = async (long, lat) => {
   const item = await searchFood(long, lat)
@@ -46,7 +47,8 @@ const searchFood = async (long, lat) => {
     }`
   ).then(response => response.json())
   console.log(results)
-  const item = results[Math.floor(Math.random() * results.length)]
+  const items = _.filter(results, i => i.types.includes('food'))
+  const item = items[Math.floor(Math.random() * items.length)]
   console.log(item)
   return item
 }
