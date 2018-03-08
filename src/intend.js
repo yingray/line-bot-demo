@@ -19,7 +19,9 @@ import {
   INTENT_UNLINK_MENU,
   INTENT_MULTI_CAST,
   INTEND_SPEAK,
-  INTEND_GET_FOOD
+  INTEND_GET_FOOD,
+  INTENT_FOLLOW,
+  INTENT_UNFOLLOW
 } from './constants'
 
 const sticker = {
@@ -37,6 +39,9 @@ const getEcho = message => {}
 
 const getIntend = e => {
   const { type, message, postback } = e
+  if (type === 'follow' || type === 'unfollow') {
+    return INTENT_FOLLOW
+  }
   if (type !== 'message' && type !== 'postback') {
     return INTEND_GET_STICKER
   }
@@ -97,6 +102,8 @@ export const getMessageObj = async (e, client, rich, users) => {
   const intend = getIntend(e)
   const userId = e.source.userId
   switch (getIntend(e)) {
+    case INTENT_FOLLOW:
+      return
     case INTEND_GET_STICKER:
       return client.pushMessage(userId, sticker)
     case INTEND_GET_MY_PROFILE:
@@ -279,7 +286,10 @@ export const getMessageObj = async (e, client, rich, users) => {
     case INTEND_SPEAK:
       return client.pushMessage(userId, { type: 'text', text: getSpeakingText(e.message.text) })
     case INTEND_GET_FOOD:
-      await client.pushMessage(userId, { type: 'text', text: getSpeakingText('get_eating_speaking') })
+      await client.pushMessage(userId, {
+        type: 'text',
+        text: getSpeakingText('get_eating_speaking')
+      })
       const messages = await getFoodMessages(e.message.longitude, e.message.latitude)
       messages.forEach(message => client.pushMessage(userId, message))
       return
