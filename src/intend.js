@@ -243,7 +243,7 @@ export const getMessageObj = async (e, client, rich, users) => {
         text: `${baseUrl}/demo/dynamiclink?userId=${userId}`
       })
     case INTEND_GET_BUTTON_TEMPLATE:
-      return client.pushMessage(userId, {
+      client.pushMessage(userId, {
         type: 'template',
         altText: 'This is a buttons template',
         template: {
