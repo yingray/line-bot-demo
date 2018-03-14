@@ -129,12 +129,12 @@ app.get('/demo/chrome', (req, res) => {
   res.redirect(redirectUrl)
 })
 
-const mydeepq_url = 'https://mydeepq.deepq.com'
+const mydeepq_domain = 'mydeepq.deepq.com'
 
 app.get('/mydeepq/chrome', (req, res) => {
-  let redirectUrl = `intent://${mydeepq_url}#Intent;scheme=https;package=com.android.chrome;end`
+  let redirectUrl = `intent://${mydeepq_domain}#Intent;scheme=https;package=com.android.chrome;end`
   if(req.headers['user-agent'].search(/iPhone/g) > 0 || req.headers['user-agent'].search(/iPad/g) > 0) {
-    redirectUrl = `googlechrome://${mydeepq_url}`
+    redirectUrl = `googlechrome://${mydeepq_domain}`
   }
   res.redirect(redirectUrl)
 })
