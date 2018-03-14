@@ -129,6 +129,16 @@ app.get('/demo/chrome', (req, res) => {
   res.redirect(redirectUrl)
 })
 
+const mydeepq_url = 'https://mydeepq.deepq.com'
+
+app.get('/mydeepq/chrome', (req, res) => {
+  let redirectUrl = `intent://${mydeepq_url}#Intent;scheme=https;package=com.android.chrome;end`
+  if(req.headers['user-agent'].search(/iPhone/g) > 0 || req.headers['user-agent'].search(/iPad/g) > 0) {
+    redirectUrl = `googlechrome://${mydeepq_url}`
+  }
+  res.redirect(redirectUrl)
+})
+
 app.post('/webhook', middleware(config), async (req, res) => {
   const userId = req.body.events[0].source.userId
   let profile = await getUserProfile(userId)

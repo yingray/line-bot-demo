@@ -14,6 +14,7 @@ import {
   INTEND_GET_INSTANT_APP_LINK,
   INTEND_GET_DYNAMIC_LINK,
   INTEND_GET_BUTTON_TEMPLATE,
+  INTEND_GET_MYDEEPQ_TEMPLATE,
   INTENT_LINK_CONTROLLER,
   INTENT_LINK_SPRING,
   INTENT_UNLINK_MENU,
@@ -82,6 +83,8 @@ const getIntend = e => {
     case 'button':
     case 'template':
       return INTEND_GET_BUTTON_TEMPLATE
+    case 'mydeepq':
+      return INTEND_GET_MYDEEPQ_TEMPLATE
     case 'linkspring':
       return INTENT_LINK_SPRING
     case 'linkcontroller':
@@ -272,11 +275,34 @@ export const getMessageObj = async (e, client, rich, users) => {
               type: 'uri',
               label: 'Instant App link',
               uri: `${baseUrl}/demo/instantapp?userId=${userId}`
+            }
+          ]
+        }
+      })
+    case INTEND_GET_MYDEEPQ_TEMPLATE:
+      const mydeepq_url = 'https://mydeepq.deepq.com'
+      return client.pushMessage(userId, {
+        type: 'template',
+        altText: 'This is a buttons template',
+        template: {
+          type: 'buttons',
+          title: 'MyDeepQ',
+          text: 'Please select',
+          defaultAction: {
+            type: 'uri',
+            label: 'View detail',
+            uri: mydeepq_url
+          },
+          actions: [
+            {
+              type: 'uri',
+              label: 'LINE browser',
+              uri: mydeepq_url
             },
             {
               type: 'uri',
-              label: 'MyDeepQ(Chrome)',
-              uri: 'https://mydeepq.deepq.com'
+              label: 'Chrome browser',
+              uri: `${baseUrl}/mydeepq/chrome`
             }
           ]
         }
