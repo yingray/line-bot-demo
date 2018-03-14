@@ -272,6 +272,11 @@ export const getMessageObj = async (e, client, rich, users) => {
               type: 'uri',
               label: 'Instant App link',
               uri: `${baseUrl}/demo/instantapp?userId=${userId}`
+            },
+            {
+              type: 'uri',
+              label: 'MyDeepQ(Chrome)',
+              uri: 'https://mydeepq.deepq.com'
             }
           ]
         }
