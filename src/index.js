@@ -68,6 +68,7 @@ const config = {
   channelSecret: process.env.SECRET
 }
 const profileTemplate = fs.readFileSync('./static/templates/profile.html', 'utf8')
+const liffTemplate = fs.readFileSync('./static/templates/liff.html', 'utf8')
 
 export const baseUrl = process.env.BASE_URL
 
@@ -77,6 +78,14 @@ app.use('/static', express.static('static'))
 app.use('/.well-known', express.static('static/.well-known'))
 
 const rich = new RichMenu(client)
+
+app.get('/liff', async (req, res) => {
+  try {
+    res.send(liffTemplate)
+  } catch (err) {
+    res.send('Not found')
+  }
+})
 
 app.get('/profile', async (req, res) => {
   const { userId } = req.query
