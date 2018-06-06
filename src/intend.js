@@ -14,6 +14,7 @@ import {
   INTEND_GET_INSTANT_APP_LINK,
   INTEND_GET_DYNAMIC_LINK,
   INTEND_GET_BUTTON_TEMPLATE,
+  INTEND_GET_LIFF_TEMPLATE,
   INTEND_GET_MYDEEPQ_TEMPLATE,
   INTENT_LINK_CONTROLLER,
   INTENT_LINK_SPRING,
@@ -83,6 +84,8 @@ const getIntend = e => {
     case 'button':
     case 'template':
       return INTEND_GET_BUTTON_TEMPLATE
+    case 'liff':
+      return INTEND_GET_LIFF_TEMPLATE
     case 'mydeepq':
       return INTEND_GET_MYDEEPQ_TEMPLATE
     case 'linkspring':
@@ -243,7 +246,7 @@ export const getMessageObj = async (e, client, rich, users) => {
         text: `${baseUrl}/demo/dynamiclink?userId=${userId}`
       })
     case INTEND_GET_BUTTON_TEMPLATE:
-      client.pushMessage(userId, {
+      return client.pushMessage(userId, {
         type: 'template',
         altText: 'This is a buttons template',
         template: {
@@ -276,6 +279,38 @@ export const getMessageObj = async (e, client, rich, users) => {
               label: 'Instant App link',
               uri: `${baseUrl}/demo/instantapp?userId=${userId}`
             }
+          ]
+        }
+      })
+    case INTEND_GET_LIFF_TEMPLATE:
+      return client.pushMessage(userId, {
+        type: 'template',
+        altText: 'This is a liff template',
+        template: {
+          type: 'buttons',
+          title: 'Button Template Demo',
+          text: 'Please select',
+          defaultAction: {
+            type: 'uri',
+            label: 'View detail',
+            uri: 'http://example.com/page/123'
+          },
+          actions: [
+            {
+              type: 'uri',
+              label: 'compact',
+              uri: `line://app/1565953323-Nbv3BOOp`
+            },
+            {
+              type: 'uri',
+              label: 'tall',
+              uri: `line://app/1565953323-X5nLw66v`
+            },
+            {
+              type: 'uri',
+              label: 'full',
+              uri: `line://app/1565953323-WLYaxllM`
+            },
           ]
         }
       })

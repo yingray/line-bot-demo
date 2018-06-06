@@ -51,6 +51,7 @@
 
 <body>
   <div class="buttongroup">
+    <h3 id="location_href">location</h3>
     <div class="buttonrow">
       <button id="openwindowbutton">Open Window</button>
       <button id="closewindowbutton">Close Window</button>
@@ -115,6 +116,7 @@
   <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
   <script>
     window.onload = function (e) {
+      document.getElementById('location_href').innerHTML = window.location.href;
       liff.init(function (data) {
         initializeApp(data);
       });
