@@ -67,6 +67,7 @@ const config = {
   channelAccessToken: process.env.ACCESS_TOKEN,
   channelSecret: process.env.SECRET
 }
+const indexTemplate = fs.readFileSync('./static/templates/index.html', 'utf8')
 const profileTemplate = fs.readFileSync('./static/templates/profile.html', 'utf8')
 const liffTemplate = fs.readFileSync('./static/templates/liff.html', 'utf8')
 
@@ -78,6 +79,8 @@ app.use('/static', express.static('static'))
 app.use('/.well-known', express.static('static/.well-known'))
 
 const rich = new RichMenu(client)
+
+app.get('/', (req, res) => res.send(indexTemplate));
 
 app.get('/liff', async (req, res) => {
   try {

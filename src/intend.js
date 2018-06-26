@@ -61,6 +61,9 @@ const getIntend = e => {
   if (target.search(/咖啡/) >= 0) {
     return INTEND_GET_CAFE
   }
+  if (target.search(/liff/i) >= 0) {
+    return INTEND_GET_LIFF_TEMPLATE
+  }
   switch (target
     .trim()
     .toLowerCase()
@@ -283,6 +286,13 @@ export const getMessageObj = async (e, client, rich, users) => {
         }
       })
     case INTEND_GET_LIFF_TEMPLATE:
+      const { text } = e.message
+      if (text.length > 4) {
+        return client.pushMessage(userId, {
+          type: 'text',
+          text: `line://app/1565953323-JXXe055w?${text.substring(4)}`
+        })
+      }
       return client.pushMessage(userId, {
         type: 'template',
         altText: 'This is a liff template',
@@ -299,18 +309,18 @@ export const getMessageObj = async (e, client, rich, users) => {
             {
               type: 'uri',
               label: 'compact',
-              uri: `line://app/1565953323-Nbv3BOOp`
+              uri: `line://app/1565953323-LNeo4ppK?/liff`
             },
             {
               type: 'uri',
               label: 'tall',
-              uri: `line://app/1565953323-X5nLw66v`
+              uri: `line://app/1565953323-JXXe055w?/liff`
             },
             {
               type: 'uri',
               label: 'full',
-              uri: `line://app/1565953323-WLYaxllM`
-            },
+              uri: `line://app/1565953323-6wy8WYY0?/liff`
+            }
           ]
         }
       })
