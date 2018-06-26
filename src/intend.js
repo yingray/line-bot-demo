@@ -293,6 +293,10 @@ export const getMessageObj = async (e, client, rich, users) => {
           text: `line://app/1565953323-JXXe055w?${text.substring(4)}`
         })
       }
+      client.pushMessage(userId, {
+        type: 'text',
+        text: '輸入"Liff{{URL}}", 小鯨魚動態生成LIFF連結給你測試唷唷！A_A'
+      })
       return client.pushMessage(userId, {
         type: 'template',
         altText: 'This is a liff template',
