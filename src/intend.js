@@ -24,7 +24,8 @@ import {
   INTEND_GET_FOOD,
   INTEND_GET_CAFE,
   INTENT_FOLLOW,
-  INTENT_UNFOLLOW
+  INTENT_UNFOLLOW,
+  INTEND_FLEX
 } from './constants'
 
 const sticker = {
@@ -63,6 +64,9 @@ const getIntend = e => {
   }
   if (target.search(/liff/i) >= 0) {
     return INTEND_GET_LIFF_TEMPLATE
+  }
+  if(target.search(/\{/) === 0) {
+    return INTEND_FLEX
   }
   switch (target
     .trim()
@@ -392,6 +396,14 @@ export const getMessageObj = async (e, client, rich, users) => {
       const messages = await getFoodMessages(longitude, latitude, false)
       messages.forEach(message => client.pushMessage(userId, message))
       setFirebaseProfile(userId, longitude, latitude)
+      return
+    case INTEND_FLEX:
+      const contents = JSON.parse(e.message.text)
+      await client.pushMessage(userId, {
+        type: 'flex',
+        altText: 'this is a flex message',
+        contents
+      })
       return
     default:
       return client.pushMessage(userId, { type: 'text', text: `小鯨魚回話：${e.message.text}` })

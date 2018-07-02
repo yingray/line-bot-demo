@@ -1,0 +1,44 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Flex message</title>
+</head>
+
+<body>
+
+  <form action="/flex" method="post">
+    <label for="line_id">User Line ID:</label>
+    <input type="text" name="line_id" />
+    <br>
+    <br>
+    <label for="message">Flex message:</label>
+    <textarea name="message" rows="20" cols="50">
+        {
+          "type": "bubble",
+          "body": {
+            "type": "box",
+            "layout": "vertical",
+            "contents": [
+              {
+                "type": "text",
+                "text": "hello"
+              },
+              {
+                "type": "text",
+                "text": "world"
+              }
+            ]
+          }
+        }
+        </textarea>
+    <br>
+    <br>
+    <button type="submit">submit</button>
+  </form>
+
+</body>
+
+</html>

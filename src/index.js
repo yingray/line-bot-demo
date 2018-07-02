@@ -1,21 +1,22 @@
-import express from 'express'
-import { middleware, Client } from '@line/bot-sdk'
-import dotenv from 'dotenv'
-import fs from 'fs'
-import _ from 'lodash'
-import mustache from 'mustache'
-import firebase from 'firebase'
+import express from "express";
+import { middleware, Client } from "@line/bot-sdk";
+import dotenv from "dotenv";
+import fs from "fs";
+import _ from "lodash";
+import mustache from "mustache";
+import firebase from "firebase";
+import bodyParser from "body-parser";
 
-import bot from './bot'
-import RichMenu from './rich'
+import bot from "./bot";
+import RichMenu from "./rich";
 
 if (process.env.DEV) {
-  const envConfig = dotenv.parse(fs.readFileSync('.env.dev'))
+  const envConfig = dotenv.parse(fs.readFileSync(".env.dev"));
   for (var k in envConfig) {
-    process.env[k] = envConfig[k]
+    process.env[k] = envConfig[k];
   }
 } else {
-  dotenv.config()
+  dotenv.config();
 }
 
 firebase.initializeApp({
@@ -25,143 +26,163 @@ firebase.initializeApp({
   projectId: process.env.PROJECT_NAME,
   storageBucket: `${process.env.PROJECT_NAME}.appspot.com`,
   messagingSenderId: process.env.MSI
-})
+});
 
-let users = []
-const app = express()
-export let usersProfile = []
-export const usersRef = firebase.database().ref('users')
+let users = [];
+const app = express();
+export let usersProfile = [];
+export const usersRef = firebase.database().ref("users");
 
-usersRef.on('value', function(snapshot) {
-  updateUsers(snapshot.val())
-})
+usersRef.on("value", function(snapshot) {
+  updateUsers(snapshot.val());
+});
 
 function updateUsers(allUsers) {
-  users = _.map(allUsers, (v, k) => k)
-  usersProfile = _.map(allUsers, (v, k) => v)
+  users = _.map(allUsers, (v, k) => k);
+  usersProfile = _.map(allUsers, (v, k) => v);
 }
 
 function getUserProfile(userId) {
   return firebase
     .database()
-    .ref('users/' + userId)
-    .once('value')
-    .then(s => s.val())
+    .ref("users/" + userId)
+    .once("value")
+    .then(s => s.val());
 }
 
 async function createUserProfile(userId) {
-  console.log('Create New User')
-  const profile = await client.getProfile(userId)
-  await writeUserData(userId, profile)
-  return profile
+  console.log("Create New User");
+  const profile = await client.getProfile(userId);
+  await writeUserData(userId, profile);
+  return profile;
 }
 
 function writeUserData(userId, profile) {
   return firebase
     .database()
-    .ref('users/' + userId)
-    .set(profile)
+    .ref("users/" + userId)
+    .set(profile);
 }
 
 const config = {
   channelAccessToken: process.env.ACCESS_TOKEN,
   channelSecret: process.env.SECRET
-}
-const indexTemplate = fs.readFileSync('./static/templates/index.html', 'utf8')
-const profileTemplate = fs.readFileSync('./static/templates/profile.html', 'utf8')
-const liffTemplate = fs.readFileSync('./static/templates/liff.html', 'utf8')
+};
+const indexTemplate = fs.readFileSync("./static/templates/index.html", "utf8");
+const flexTemplate = fs.readFileSync("./static/templates/flex.html", "utf8");
+const profileTemplate = fs.readFileSync("./static/templates/profile.html", "utf8");
+const liffTemplate = fs.readFileSync("./static/templates/liff.html", "utf8");
 
-export const baseUrl = process.env.BASE_URL
+export const baseUrl = process.env.BASE_URL;
 
-const client = new Client(config)
+const client = new Client(config);
 
-app.use('/static', express.static('static'))
-app.use('/.well-known', express.static('static/.well-known'))
+app.use("/static", express.static("static"));
+app.use("/.well-known", express.static("static/.well-known"));
 
-const rich = new RichMenu(client)
+const rich = new RichMenu(client);
 
-app.get('/', (req, res) => res.send(indexTemplate));
+app.get("/", (req, res) => res.send(indexTemplate));
 
-app.get('/liff', async (req, res) => {
+app.get("/liff", async (req, res) => {
   try {
-    res.send(liffTemplate)
+    res.send(liffTemplate);
   } catch (err) {
-    res.send('Not found')
+    res.send("Not found");
   }
-})
+});
 
-app.get('/profile', async (req, res) => {
-  const { userId } = req.query
+app.get("/profile", async (req, res) => {
+  const { userId } = req.query;
   if (!userId) {
-    res.send('尚未登入')
-    return
+    res.send("尚未登入");
+    return;
   }
   try {
-    const profile = await client.getProfile(userId)
-    mustache.parse(profileTemplate)
+    const profile = await client.getProfile(userId);
+    mustache.parse(profileTemplate);
     const html = mustache.render(profileTemplate, {
-      name: profile.displayName || '',
-      status: profile.statusMessage || '',
+      name: profile.displayName || "",
+      status: profile.statusMessage || "",
       image: profile.pictureUrl
-    })
-    res.send(html)
+    });
+    res.send(html);
   } catch (err) {
-    res.send('Not found')
+    res.send("Not found");
   }
-})
+});
 
-app.get('/instant', (req, res) => {
-  const userId = req.query.userId
-  const redirectUrl = `${baseUrl}/profile?userId=${userId}`
-  res.redirect(redirectUrl)
-})
+app.get("/instant", (req, res) => {
+  const userId = req.query.userId;
+  const redirectUrl = `${baseUrl}/profile?userId=${userId}`;
+  res.redirect(redirectUrl);
+});
 
-app.get('/demo/dynamiclink', (req, res) => {
-  const userId = req.query.userId
-  const appCode = process.env.APP_CODE
-  const apn = process.env.APN
-  const link = `${baseUrl}/profile?userId=${userId}`
-  const redirectUrl = `https://${appCode}.app.goo.gl/?apn=${apn}&link=${link}&afl=${link}`
-  res.redirect(redirectUrl)
-})
+app.get("/demo/dynamiclink", (req, res) => {
+  const userId = req.query.userId;
+  const appCode = process.env.APP_CODE;
+  const apn = process.env.APN;
+  const link = `${baseUrl}/profile?userId=${userId}`;
+  const redirectUrl = `https://${appCode}.app.goo.gl/?apn=${apn}&link=${link}&afl=${link}`;
+  res.redirect(redirectUrl);
+});
 
-app.get('/demo/instantapp', (req, res) => {
-  const userId = req.query.userId
+app.get("/demo/instantapp", (req, res) => {
+  const userId = req.query.userId;
   // const redirectUrl = 'intent://hotpads.com/indigo-at-twelve-west-portland-or-97205-skfrgn/pad#Intent;scheme=https;end'
-  const redirectUrl = `intent://${baseUrl.replace(/https:\/\//, '')}/instant?userId=${userId}#Intent;scheme=https;end`
-  res.redirect(redirectUrl)
-})
+  const redirectUrl = `intent://${baseUrl.replace(/https:\/\//, "")}/instant?userId=${userId}#Intent;scheme=https;end`;
+  res.redirect(redirectUrl);
+});
 
-app.get('/demo/chrome', (req, res) => {
-  const userId = req.query.userId
-  let redirectUrl = `intent://${baseUrl.replace(/https:\/\//, '')}/profile?userId=${userId}#Intent;scheme=https;package=com.android.chrome;end`
-  if(req.headers['user-agent'].search(/iPhone/g) > 0 || req.headers['user-agent'].search(/iPad/g) > 0) {
-    redirectUrl = `googlechrome://${baseUrl.replace(/https:\/\//, '')}/profile?userId=${userId}`
+app.get("/demo/chrome", (req, res) => {
+  const userId = req.query.userId;
+  let redirectUrl = `intent://${baseUrl.replace(
+    /https:\/\//,
+    ""
+  )}/profile?userId=${userId}#Intent;scheme=https;package=com.android.chrome;end`;
+  if (req.headers["user-agent"].search(/iPhone/g) > 0 || req.headers["user-agent"].search(/iPad/g) > 0) {
+    redirectUrl = `googlechrome://${baseUrl.replace(/https:\/\//, "")}/profile?userId=${userId}`;
   }
-  res.redirect(redirectUrl)
-})
+  res.redirect(redirectUrl);
+});
 
-const mydeepq_domain = 'mydeepq.deepq.com'
+const mydeepq_domain = "mydeepq.deepq.com";
 
-app.get('/mydeepq/chrome', (req, res) => {
-  let redirectUrl = `intent://${mydeepq_domain}#Intent;scheme=https;package=com.android.chrome;end`
-  if(req.headers['user-agent'].search(/iPhone/g) > 0 || req.headers['user-agent'].search(/iPad/g) > 0) {
-    redirectUrl = `googlechrome://${mydeepq_domain}`
+app.get("/mydeepq/chrome", (req, res) => {
+  let redirectUrl = `intent://${mydeepq_domain}#Intent;scheme=https;package=com.android.chrome;end`;
+  if (req.headers["user-agent"].search(/iPhone/g) > 0 || req.headers["user-agent"].search(/iPad/g) > 0) {
+    redirectUrl = `googlechrome://${mydeepq_domain}`;
   }
-  res.redirect(redirectUrl)
-})
+  res.redirect(redirectUrl);
+});
 
-app.post('/webhook', middleware(config), async (req, res) => {
-  const userId = req.body.events[0].source.userId
-  let profile = await getUserProfile(userId)
+app.post("/webhook", middleware(config), async (req, res) => {
+  const userId = req.body.events[0].source.userId;
+  let profile = await getUserProfile(userId);
   if (!profile) {
-    profile = await createUserProfile(userId)
+    profile = await createUserProfile(userId);
   }
-  console.log(profile)
-  await new bot(client, req.body.events, rich, users).start()
-  res.send('A_A')
-})
+  console.log(profile);
+  await new bot(client, req.body.events, rich, users).start();
+  res.send("A_A");
+});
+
+app.get("/flex", (req, res) => res.send(flexTemplate));
+
+app.post("/flex", bodyParser.urlencoded({ extended: false }), async (req, res) => {
+  console.log(JSON.stringify(req.body))
+  try {
+    await client.pushMessage(req.body.line_id, {
+      type: "flex",
+      altText: "this is a flex message",
+      contents: JSON.parse(req.body.message)
+    });
+  } catch (err) {
+    return res.send("error");
+  }
+  return res.send("Send!");
+});
 
 app.listen(process.env.PORT || 5000, () => {
-  console.log('Line BOT server has been started!')
-})
+  console.log("Line BOT server has been started!");
+});
